@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League of Legends Champion Info</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .search-bar {
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        #championList {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: none; /* Initially hidden */
+        }
+
+        #championList li {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #championList li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .champion-info {
+            display: none;
+            text-align: center;
+        }
+
+        #championImage {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-top: 20px;
+        }
+
+        #spellList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #spellList li {
+            margin: 10px 0;
+        }
+
+        .spell {
+            margin-bottom: 20px;
+        }
+
+        .spell h4 {
+            margin: 0;
+        }
+
+        .cooldowns {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>League of Legends Champion Info</h1>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search for a champion" onkeyup="searchChampion()">
+            <ul id="championList"></ul>
+        </div>
+
+        <div id="championInfo" class="champion-info">
+            <h2 id="championName"></h2>
+            <img id="championImage" src="" alt="Champion Image">
+            <div id="spells">
+                <h3>Spells</h3>
+                <ul id="spellList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', async () => {
+            console.log("Getting champion list...");
+            const _champions = (await (await fetch("/allChampions")).json());
+            console.log("Champions get:", _champions);
+            let CHAMPIONS = Object.values(_champions.data).map(x => {
+                return {
+                    id: x?.key,
+                    name: x?.id
+                };
+            });
+
+            console.log("CHAMPIONS:", CHAMPIONS);
+
+            async function getChampionById(id) {
+                const key = CHAMPIONS.find(x => x.id == id).name;
+                const url = `/getChampion?key=${key}`;
+                console.log("Getting URL:", url);
+                let result = await fetch(url);
+                let json = await result.json();
+                return json;
+            }
+
+            function getAllChampions() {
+                let temp = CHAMPIONS.map(champion => ({ id: champion.id, name: champion.name }));
+                console.log("[getAllChampions]", temp);
+                return temp;
+            }
+
+            function searchChampion() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const filteredChampions = getAllChampions().filter(champion => champion.name.toLowerCase().includes(searchTerm));
+                console.log("filtered champions:", filteredChampions);
+                const championList = document.getElementById('championList');
+                championList.innerHTML = ''; // Clear previous results
+
+                filteredChampions.forEach(champion => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = champion.name;
+                    listItem.onclick = () => displayChampionInfo(champion.id);
+                    searchTerm.value = ""
+                    championList.appendChild(listItem);
+                });
+
+                championList.style.display = filteredChampions.length ? 'block' : 'none';
+            }
+
+            async function displayChampionInfo(id) {
+                const champion = await getChampionById(id);
+                console.log("Champion:", champion);
+
+                if (champion) {
+                    document.getElementById('championName').textContent = champion.name;
+                    document.getElementById('championImage').src = `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champion.id}_0.jpg`;
+                    document.getElementById('championInfo').style.display = 'block';
+
+                    const spellList = document.getElementById('spellList');
+                    spellList.innerHTML = ''; // Clear previous spells list
+
+                    const keybinds = ['Q', 'W', 'E', 'R'];
+                    champion.spells.forEach((spell, index) => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `<strong>${keybinds[index]} - ${spell.name}:</strong> ${spell.description}<br><span class="cooldowns">Cooldowns: ${spell.cooldown.join(', ')}</span>`;
+                        spellList.appendChild(listItem);
+                    });
+                }
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('focus', () => {
+                const championList = document.getElementById('championList');
+                if (championList.children.length > 0) {
+                    championList.style.display = 'block';
+                }
+            });
+
+            searchInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    document.getElementById('championList').style.display = 'none';
+                }, 100); // Delay to allow click event on list items
+            });
+
+            window.searchChampion = searchChampion;
+        });
+    </script>
+</body>
+</html>
