@@ -9,6 +9,25 @@
             box-sizing: border-box;
             font-family:Verdana, Geneva, Tahoma, sans-serif;
         }
+
+
+        .btn-normal {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #7289da;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-normal:hover {
+            background-color: #7e92dd;
+            cursor: pointer;
+        }
+
+        .btn-normal:active {
+            background-color: #5971c5;
+        }
+
         html, body {
             margin: 0;
         }
@@ -119,21 +138,6 @@
         }
         div.champion > div.champ > div.buttons > button {
             width: fit-content;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #7289da;
-            background: transparent;
-            color: white;
-            cursor: pointer;
-        }
-
-        div.champion > div.champ > div.buttons > button:hover {
-            background-color: #7e92dd;
-            cursor: pointer;
-        }
-
-        div.champion > div.champ > div.buttons > button:active {
-            background-color: #5971c5;
         }
 
         div.champion > div.text > div.title {
@@ -223,6 +227,10 @@
 </head>
 <body>
 
+
+    <div style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1001;">
+        <button class="btn-normal" onclick="clearAllChampions()">Clear All Champions</button>
+    </div>
 
     <div id="searchBarMenu" class="hidden">
         <div class="search-bar">
@@ -372,8 +380,8 @@
                 let inner_html = `${
                     team == 'blue' ? `<div class="champ">
                     <div class="buttons">
-                        <button onclick='clearChampion("${team}",${number})'>Clear</button>
-                        <button onclick='selectChampion("${team}",${number})'>Select</button>
+                        <button class="btn-normal" onclick='clearChampion("${team}",${number})'>Clear</button>
+                        <button class="btn-normal" onclick='selectChampion("${team}",${number})'>Select</button>
                     </div>
                     <img class="image ${team}.p${number}.image.src" src="{{champion.imageURL}}">
                 </div>` : ""    
@@ -420,8 +428,8 @@
                 ${
                     team == 'red' ? `<div class="champ">
                     <div class="buttons">
-                        <button onclick='clearChampion("${team}",${number})'>Clear</button>
-                        <button onclick='selectChampion("${team}",${number})'>Select</button>
+                        <button class="btn-normal" onclick='clearChampion("${team}",${number})'>Clear</button>
+                        <button class="btn-normal" onclick='selectChampion("${team}",${number})'>Select</button>
                     </div>
                     <img class="image ${team}.p${number}.image.src" src="{{champion.imageURL}}">
                 </div>` : ""    
@@ -432,19 +440,19 @@
                 inner_html = inner_html.split("{{champion.name}}")             .join(datas.championName)
                 inner_html = inner_html.split("{{spell.passive.name}}")        .join(datas.spells.passive.name)
                 inner_html = inner_html.split("{{spell.passive.description}}") .join(datas.spells.passive.description)
-                inner_html = inner_html.split("{{spell.passive.cooldown}}")    .join(datas.spells.passive.cooldown)
+                inner_html = inner_html.split("{{spell.passive.cooldown}}")    .join(datas.spells.passive.cooldown?.join?.(" / ") ?? "")
                 inner_html = inner_html.split("{{spell.q.name}}")              .join(datas.spells.q.name)
                 inner_html = inner_html.split("{{spell.q.description}}")       .join(datas.spells.q.description)
-                inner_html = inner_html.split("{{spell.q.cooldown}}")          .join(datas.spells.q.cooldown)
+                inner_html = inner_html.split("{{spell.q.cooldown}}")          .join(datas.spells.q.cooldown?.join?.(" / ") ?? "")
                 inner_html = inner_html.split("{{spell.w.name}}")              .join(datas.spells.w.name)
                 inner_html = inner_html.split("{{spell.w.description}}")       .join(datas.spells.w.description)
-                inner_html = inner_html.split("{{spell.w.cooldown}}")          .join(datas.spells.w.cooldown)
+                inner_html = inner_html.split("{{spell.w.cooldown}}")          .join(datas.spells.w.cooldown?.join?.(" / ") ?? "")
                 inner_html = inner_html.split("{{spell.e.name}}")              .join(datas.spells.e.name)
                 inner_html = inner_html.split("{{spell.e.description}}")       .join(datas.spells.e.description)
-                inner_html = inner_html.split("{{spell.e.cooldown}}")          .join(datas.spells.e.cooldown)
+                inner_html = inner_html.split("{{spell.e.cooldown}}")          .join(datas.spells.e.cooldown?.join?.(" / ") ?? "")
                 inner_html = inner_html.split("{{spell.r.name}}")              .join(datas.spells.r.name)
                 inner_html = inner_html.split("{{spell.r.description}}")       .join(datas.spells.r.description)
-                inner_html = inner_html.split("{{spell.r.cooldown}}")          .join(datas.spells.r.cooldown)
+                inner_html = inner_html.split("{{spell.r.cooldown}}")          .join(datas.spells.r.cooldown?.join?.(" / ") ?? "")
 
                 elem.innerHTML = inner_html
 
@@ -560,12 +568,20 @@
 
             const API = {
                 searchBar: {
-                    show: () => { document.querySelector("#searchBarMenu").classList.remove("hidden"); SEARCHBAR_CACHE.displayed = true },
+                    show: () => { document.querySelector("#searchBarMenu").classList.remove("hidden"); SEARCHBAR_CACHE.displayed = true; document.querySelector("#searchInput").focus() },
                     hide: () => { document.querySelector("#searchBarMenu").classList.add("hidden"); SEARCHBAR_CACHE.displayed = false }
                 }
             }
             window.API = API
 
+            document.querySelector("#searchBarMenu").addEventListener("click", event => {
+                if(event.target.id != "searchInput") {
+                    API.searchBar.hide()
+                    SEARCHBAR_CACHE.forChampion = null
+                }
+            })
+
+                
             
             function selectChampion(team, number) {
                 SEARCHBAR_CACHE.forChampion = `${team}.${number}`
@@ -672,6 +688,26 @@
             });
 
             window.searchChampion = searchChampion;
+
+
+            function clearAllChampions() {
+                let confirmed = confirm("Do you really want to clear all champions ?")
+                if(!confirmed) return;
+                localStorage.removeItem("blue.1")
+                localStorage.removeItem("blue.2")
+                localStorage.removeItem("blue.3")
+                localStorage.removeItem("blue.4")
+                localStorage.removeItem("blue.5")
+                
+                localStorage.removeItem("red.1")
+                localStorage.removeItem("red.2")
+                localStorage.removeItem("red.3")
+                localStorage.removeItem("red.4")
+                localStorage.removeItem("red.5")
+
+                refreshDisplay()
+            }
+            window.clearAllChampions = clearAllChampions
 
             refreshDisplay()
         });
