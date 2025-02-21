@@ -60,7 +60,7 @@ npm start
 
 Alternatively, you can use the provided start script:
 - For **Windows:**, run `./start.bat`
-- For **Linux/Mac:**, run `./start.bat`
+- For **Linux/Mac:**, run `./start.sh`
 
 After running the script, open your browser and navigate to `http://localhost:3000` to see the application in action.
 
@@ -72,6 +72,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE.mp3) f
 
 ## Contact 📧
 
-If you have any questions or suggestions, feel free to open an issue or contact me at [your-email@example.com].
+If you have any questions or suggestions, feel free to open an issue !
 
 Happy coding! 🎉
