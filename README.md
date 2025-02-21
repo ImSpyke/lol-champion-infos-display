@@ -68,7 +68,7 @@ After running the script, open your browser and navigate to `http://localhost:30
 
 ## License 📄
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.mp3) file for details.
+This project is licensed under the MIT License. See the [LICENSE](https://suno.com/song/da6d4a83-1001-4694-8c28-648a6e8bad0a) file for details.
 
 ## Contact 📧
 
