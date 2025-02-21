@@ -7,28 +7,28 @@
     <style>
         * {
             box-sizing: border-box;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
         }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+        html, body {
             margin: 0;
-            padding: 0;
+        }
+        #searchBarMenu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-        }
 
         .search-bar {
             position: relative;
+            width: max(400px, 60vw);
         }
 
         #searchInput {
@@ -45,7 +45,7 @@
             top: 100%;
             left: 0;
             width: 100%;
-            max-height: 200px;
+            max-height: 40vh;
             overflow-y: auto;
             background-color: white;
             border: 1px solid #ccc;
@@ -64,51 +64,246 @@
             background-color: #f0f0f0;
         }
 
-        .champion-info {
-            display: none;
-            text-align: center;
+
+        .hidden {
+            display: none !important;
         }
 
-        #championImage {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            margin-top: 20px;
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;  /* 2 equal columns */
+            grid-template-rows: 1fr;  /* Single row */
+            height: 100vh;  /* Full viewport height */
+            background-color: #36393E;
+            color: white;
+            overflow: hidden;
+        }
+        .container > .subcontainer {
+            display: grid;
+            grid-template-rows: repeat(5, 1fr);  /* 5 rows inside each div */
+        }
+        .container > .subcontainer > .champion {
+            display: grid;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .container > .subcontainer.left > .champion {
+            grid-template-columns: 1fr 2fr; /* Two columns: left for image, right for details */
+        }
+        .container > .subcontainer.right > .champion {
+            grid-template-columns: 2fr 1fr; /* Two columns: left for image, right for details */
         }
 
-        #spellList {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+        .container > .left > .champion {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+            text-align: left;
+        }
+        .container > .right > .champion {
+            background: linear-gradient(to left, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+            text-align: right;
+        }
+        .container > .left > .champion:hover {
+            background: linear-gradient(to right, rgba(114, 137, 218, 0.2), rgba(114, 137, 218, 0));
+        }
+        .container > .right > .champion:hover {
+            background: linear-gradient(to left, rgba(114, 137, 218, 0.2), rgba(114, 137, 218, 0));
         }
 
-        #spellList li {
-            margin: 10px 0;
+
+        div.champion > div.champ {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        div.champion > div.champ > div.buttons > button {
+            width: fit-content;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #7289da;
+            background: transparent;
+            color: white;
+            cursor: pointer;
         }
 
-        .spell {
-            margin-bottom: 20px;
+        div.champion > div.champ > div.buttons > button:hover {
+            background-color: #7e92dd;
+            cursor: pointer;
         }
 
-        .spell h4 {
-            margin: 0;
+        div.champion > div.champ > div.buttons > button:active {
+            background-color: #5971c5;
         }
 
-        .cooldowns {
-            font-size: 14px;
-            color: #666;
+        div.champion > div.text > div.title {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-bottom: 10px;
         }
+
+        div.champion > div.champ > img {
+            width: calc(100vh / 7);
+            margin: 5px;
+            border-radius: 10px;
+        }
+
+        .spells {
+            font-size: 1em;
+        }
+
+/* Style for each spell */
+.spell {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    position: relative; /* Needed for positioning the tooltip */
+    cursor: pointer;
+    width: fit-content;
+}
+.container > .right > .champion > div.text > div.spells > div.spell {
+    margin-left: auto;
+}
+/* Spell tooltip */
+.spell-description {
+    visibility: hidden;
+  display: inline;
+  position: absolute;
+  right: 100px; 
+  background: #888;
+  border: 1px solid black;
+  width: 500px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+/* Show the tooltip when hovering over a spell */
+.spell:hover .spell-description {
+    visibility: visible;
+    opacity: 1;
+}
+
+.container > .left > .champion > div.text > div.spells > div.spell:hover .spell-description {
+    left:0;
+}
+
+.spell {
+    position: relative;
+}
+.spell > .spell_name {
+    font-weight: bold;
+}
+.spell > .spell_cooldown {
+    color: gray;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.spell:hover .spell-description {
+    top: 25px;
+}
+
+.champion.p5 .spell:hover .spell-description {
+    top: inherit;
+    bottom: 25px;
+}
+
+/* Example for each spell description */
+.passive_spell .spell-description {
+    top: 30px; /* Positioning for the passive spell description */
+}
+
+.spell_Q .spell-description,
+.spell_W .spell-description,
+.spell_E .spell-description,
+.spell_R .spell-description {
+    top: 30px; /* Adjust if you want a different placement for these */
+}
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>League of Legends Champion Info</h1>
 
+
+    <div id="searchBarMenu" class="hidden">
         <div class="search-bar">
             <input type="text" id="searchInput" placeholder="Search for a champion" onkeyup="searchChampion()">
             <ul id="championList"></ul>
         </div>
+    </div>
 
+
+    <div class="container">
+
+        <!--
+        
+            blue.p1.spells.passive.name
+            blue.p1.spells.passive.description
+            blue.p1.spells.q.name
+            blue.p1.spells.q.description
+            blue.p1.spells.w.name
+            blue.p1.spells.w.description
+            blue.p1.spells.e.name
+            blue.p1.spells.e.description
+            blue.p1.spells.r.name
+            blue.p1.spells.r.description
+        
+        -->
+
+        <div class="subcontainer left">
+
+
+            <!--
+            <div class="champion p1">
+
+                <div class="champ">
+                    <div class="buttons">
+                        <button>Clear</button>
+                        <button>Select</button>
+                    </div>
+                    <img class="image blue.p1.image.src" src="http://ddragon.leagueoflegends.com/cdn/img/champion/tiles/Aatrox_0.jpg">
+                </div>
+                <div class="text">
+                    <div class="title blue.p1.name">Atakhan</div>
+                    <div class="spells">
+                        <div class="passive_spell">Passive: <span class="spell_passive blue.p1.spells.passive.name" title="passive spell description">passive spell</span></div>
+                        <div class="spell">
+                            Q: <span class="spell_name spell_Q blue.p1.spells.q.name">Q spell zze ffz e zefz fe</span>
+                            <div class="spell-description blue.p1.spells.q.description">
+                                <b>Q: <span class="blue.p1.spells.q.name"></span></b>
+                                <br>
+                                <i><span class="blue.p1.spells.q.description">This is the description of the Q spell.</span></i>
+                            </div>
+                        </div>
+                        <div class="spell">
+                            W: <span class="spell_name spell_W blue.p1.spells.w.name">W spell</span>
+                            <div class="spell-description blue.p1.spells.w.description">This is the description of the W spell.</div>
+                        </div>
+                        <div class="spell">
+                            E: <span class="spell_name spell_E blue.p1.spells.e.name">E spell</span>
+                            <div class="spell-description blue.p1.spells.e.description">This is the description of the E spell.</div>
+                        </div>
+                        <div class="spell">
+                            R: <span class="spell_name spell_R blue.p1.spells.r.name">R spell</span>
+                            <div class="spell-description blue.p1.spells.r.description">This is the description of the R spell.</div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>--> <!-- champion -->
+
+        </div>
+
+        <div class="subcontainer right">
+
+
+        </div>
+
+
+        <!--
+        <h1>League of Legends Champion Info</h1>
+
+        
         <div id="championInfo" class="champion-info">
             <h2 id="championName"></h2>
             <img id="championImage" src="" alt="Champion Image">
@@ -117,10 +312,273 @@
                 <ul id="spellList"></ul>
             </div>
         </div>
+        -->
     </div>
 
     <script>
+
+        const SEARCHBAR_CACHE = {
+            displayed: false,
+            value: "",
+            forChampion: null
+        }
         window.addEventListener('load', async () => {
+
+
+
+            function createChampionElement(team, number, datas) {
+                /*
+                team = "blue" | "red"
+                nuber = 1 | 2 | 3 | 4 | 5
+                datas = {
+                    championName: string,
+                    imageURL: string
+                    spells: {
+                        passive: {
+                            name: string
+                            description: string
+                        },
+                        q: {
+                            name: string
+                            description: string
+                        },
+                        w: {
+                            name: string
+                            description: string
+                        },
+                        e: {
+                            name: string
+                            description: string
+                        },
+                        r: {
+                            name: string
+                            description: string
+                        }
+                    }
+                }
+
+                */
+
+                if(team != 'blue' && team != 'red') {
+                    throw new Error("Invalid team specified. Team must be 'blue' or 'red'.");
+                }
+                if([1,2,3,4,5].includes(number) != true) {
+                    throw new Error("Invalid number specified. Must bet 1 <= X <= 5")
+                }
+                
+
+                let elem = document.createElement("div")
+                elem.className = `champion p${number}`
+                let inner_html = `${
+                    team == 'blue' ? `<div class="champ">
+                    <div class="buttons">
+                        <button onclick='clearChampion("${team}",${number})'>Clear</button>
+                        <button onclick='selectChampion("${team}",${number})'>Select</button>
+                    </div>
+                    <img class="image ${team}.p${number}.image.src" src="{{champion.imageURL}}">
+                </div>` : ""    
+                }
+                <div class="text">
+                    <div class="title ${team}.p${number}.name">{{champion.name}}</div>
+                    <div class="spells">
+                        <div class="passive_spell">Passive: <span class="spell_passive ${team}.p${number}.spells.passive.name" title="{{spell.passive.description}}">{{spell.passive.name}}</span></div>
+                        <div class="spell">
+                            Q: <span class="spell_name spell_Q ${team}.p${number}.spells.q.name">{{spell.q.name}}</span><span class="spell_cooldown">{{spell.q.cooldown}}</span>
+                            <div class="spell-description ${team}.p${number}.spells.q.description">
+                                <b>Q: <span class="${team}.p${number}.spells.q.name">{{spell.q.name}}</span></b>
+                                <br>
+                                <i><span class="${team}.p${number}.spells.q.description">{{spell.q.description}}</span></i>
+                            </div>
+                        </div>
+                        <div class="spell">
+                            W: <span class="spell_name spell_W ${team}.p${number}.spells.w.name">{{spell.w.name}}</span><span class="spell_cooldown">{{spell.w.cooldown}}</span>
+                            <div class="spell-description ${team}.p${number}.spells.w.description">
+                                <b>W: <span class="${team}.p${number}.spells.w.name">{{spell.w.name}}</span></b>
+                                <br>
+                                <i><span class="${team}.p${number}.spells.w.description">{{spell.w.description}}</span></i>
+                            </div>
+                        </div>
+                        <div class="spell">
+                            E: <span class="spell_name spell_E ${team}.p${number}.spells.e.name">{{spell.e.name}}</span><span class="spell_cooldown">{{spell.e.cooldown}}</span>
+                            <div class="spell-description ${team}.p${number}.spells.e.description">
+                                <b>E: <span class="${team}.p${number}.spells.e.name">{{spell.e.name}}</span></b>
+                                <br>
+                                <i><span class="${team}.p${number}.spells.e.description">{{spell.e.description}}</span></i>
+                            </div>
+                        </div>
+                        <div class="spell">
+                            R: <span class="spell_name spell_R ${team}.p${number}.spells.r.name">{{spell.r.name}}</span><span class="spell_cooldown">{{spell.r.cooldown}}</span>
+                            <div class="spell-description ${team}.p${number}.spells.r.description">
+                                <b>R: <span class="${team}.p${number}.spells.r.name">{{spell.r.name}}</span></b>
+                                <br>
+                                <i><span class="${team}.p${number}.spells.r.description">{{spell.r.description}}</span></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                ${
+                    team == 'red' ? `<div class="champ">
+                    <div class="buttons">
+                        <button onclick='clearChampion("${team}",${number})'>Clear</button>
+                        <button onclick='selectChampion("${team}",${number})'>Select</button>
+                    </div>
+                    <img class="image ${team}.p${number}.image.src" src="{{champion.imageURL}}">
+                </div>` : ""    
+                }
+
+                <!-- champion -->`
+                inner_html = inner_html.split("{{champion.imageURL}}")         .join(datas.imageURL)
+                inner_html = inner_html.split("{{champion.name}}")             .join(datas.championName)
+                inner_html = inner_html.split("{{spell.passive.name}}")        .join(datas.spells.passive.name)
+                inner_html = inner_html.split("{{spell.passive.description}}") .join(datas.spells.passive.description)
+                inner_html = inner_html.split("{{spell.passive.cooldown}}")    .join(datas.spells.passive.cooldown)
+                inner_html = inner_html.split("{{spell.q.name}}")              .join(datas.spells.q.name)
+                inner_html = inner_html.split("{{spell.q.description}}")       .join(datas.spells.q.description)
+                inner_html = inner_html.split("{{spell.q.cooldown}}")          .join(datas.spells.q.cooldown)
+                inner_html = inner_html.split("{{spell.w.name}}")              .join(datas.spells.w.name)
+                inner_html = inner_html.split("{{spell.w.description}}")       .join(datas.spells.w.description)
+                inner_html = inner_html.split("{{spell.w.cooldown}}")          .join(datas.spells.w.cooldown)
+                inner_html = inner_html.split("{{spell.e.name}}")              .join(datas.spells.e.name)
+                inner_html = inner_html.split("{{spell.e.description}}")       .join(datas.spells.e.description)
+                inner_html = inner_html.split("{{spell.e.cooldown}}")          .join(datas.spells.e.cooldown)
+                inner_html = inner_html.split("{{spell.r.name}}")              .join(datas.spells.r.name)
+                inner_html = inner_html.split("{{spell.r.description}}")       .join(datas.spells.r.description)
+                inner_html = inner_html.split("{{spell.r.cooldown}}")          .join(datas.spells.r.cooldown)
+
+                elem.innerHTML = inner_html
+
+                return elem
+            }
+
+            async function getChampionDatasByID(championID) {
+                let champion = championID == null ? null : await getChampionById(championID)
+
+                const DefaultImageURL = "https://ddragon.cdn.pog-group.com/img/champion/tiles/Default_3.title.png"
+
+                if(champion == null) {
+                    champion = {
+                        name: "&nbsp;",
+                        passive: {
+                            name: "", description: "", cooldown: ""
+                        },
+                        spells: [
+                            { name: "Q spell", description: "", cooldown: "" },
+                            { name: "W spell", description: "", cooldown: "" },
+                            { name: "E spell", description: "", cooldown: "" },
+                            { name: "R spell", description: "", cooldown: "" },
+                        ]
+                    }
+                }
+
+                let spells = {
+                    q: champion.spells[0],
+                    w: champion.spells[1],
+                    e: champion.spells[2],
+                    r: champion.spells[3],
+                }
+
+                return {
+                    championName: champion.name,
+                    imageURL: (champion?.id == null || champion?.id == "") ? DefaultImageURL : `https://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${champion.id}_0.jpg`,
+                    spells: {
+                        passive: {
+                            name: champion.passive.name,
+                            description: champion.passive.description
+                        },
+                        q: {
+                            name: spells.q.name,
+                            description: spells.q.description,
+                            cooldown: spells.q.cooldown
+                        },
+                        w: {
+                            name: spells.w.name,
+                            description: spells.w.description,
+                            cooldown: spells.w.cooldown
+                        },
+                        e: {
+                            name: spells.e.name,
+                            description: spells.e.description,
+                            cooldown: spells.e.cooldown
+                        },
+                        r: {
+                            name: spells.r.name,
+                            description: spells.r.description,
+                            cooldown: spells.r.cooldown
+                        }
+                    }
+                }
+            }
+
+            async function refreshDisplay() {
+                let blueElements = await Promise.all([
+                    localStorage.getItem("blue.1"),
+                    localStorage.getItem("blue.2"),
+                    localStorage.getItem("blue.3"),
+                    localStorage.getItem("blue.4"),
+                    localStorage.getItem("blue.5"),
+                ].map(async (championID, index) => {
+                    let team = "blue"
+                    let number = parseInt(index) + 1
+                    let datas = await getChampionDatasByID(championID)
+                    let elem = createChampionElement(team, number, datas)
+                    return elem
+                }))
+
+                let redElements = await Promise.all([
+                    localStorage.getItem("red.1"),
+                    localStorage.getItem("red.2"),
+                    localStorage.getItem("red.3"),
+                    localStorage.getItem("red.4"),
+                    localStorage.getItem("red.5"),
+                ].map(async (championID,index) => {
+                    let team = "red"
+                    let number = parseInt(index) + 1
+                    let datas = await getChampionDatasByID(championID)
+                    let elem = createChampionElement(team, number, datas)
+                    return elem
+                }))
+
+                console.log("blueElements:",blueElements)
+                console.log("redElements:",redElements)
+
+                const Left = document.querySelector(".subcontainer.left")
+                Left.innerHTML = ""
+                for(let i in blueElements) {
+                    let elem = blueElements[i]
+                    Left.appendChild(elem)
+                }
+                const Right = document.querySelector(".subcontainer.right")
+                Right.innerHTML = ""
+                for(let i in redElements) {
+                    let elem = redElements[i]
+                    Right.appendChild(elem)
+                }
+            }
+
+            window.refreshDisplay = refreshDisplay
+
+            const API = {
+                searchBar: {
+                    show: () => { document.querySelector("#searchBarMenu").classList.remove("hidden"); SEARCHBAR_CACHE.displayed = true },
+                    hide: () => { document.querySelector("#searchBarMenu").classList.add("hidden"); SEARCHBAR_CACHE.displayed = false }
+                }
+            }
+            window.API = API
+
+            
+            function selectChampion(team, number) {
+                SEARCHBAR_CACHE.forChampion = `${team}.${number}`
+                API.searchBar.show()
+            }
+            function clearChampion(team, number) {
+                localStorage.removeItem(`${team}.${number}`)
+                refreshDisplay()
+            }
+            window.selectChampion = selectChampion
+            window.clearChampion = clearChampion
+
+
             console.log("Getting champion list...");
             const _champions = (await (await fetch("/allChampions")).json());
             console.log("Champions get:", _champions);
@@ -148,9 +606,16 @@
                 return temp;
             }
 
-            function searchChampion() {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                const filteredChampions = getAllChampions().filter(champion => champion.name.toLowerCase().includes(searchTerm));
+            function normalizeString(str) {
+                return str.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+            }
+
+            function searchChampion(forTile=null) {
+                /*
+                forTile = "left.1" | "left.2" | ... | "right.1" | "right.2"
+                */
+                const searchTerm = normalizeString(document.getElementById('searchInput').value.toLowerCase())
+                const filteredChampions = getAllChampions().filter(champion => normalizeString(champion.name.toLowerCase()).includes(searchTerm));
                 console.log("filtered champions:", filteredChampions);
                 const championList = document.getElementById('championList');
                 championList.innerHTML = ''; // Clear previous results
@@ -158,7 +623,12 @@
                 filteredChampions.forEach(champion => {
                     const listItem = document.createElement('li');
                     listItem.textContent = champion.name;
-                    listItem.onclick = () => displayChampionInfo(champion.id);
+                    listItem.onclick = () => {
+                        SEARCHBAR_CACHE.value = champion.id
+                        API.searchBar.hide()
+                        localStorage.setItem(SEARCHBAR_CACHE.forChampion, champion.id)
+                        refreshDisplay()
+                    }
                     searchTerm.value = ""
                     championList.appendChild(listItem);
                 });
@@ -172,7 +642,7 @@
 
                 if (champion) {
                     document.getElementById('championName').textContent = champion.name;
-                    document.getElementById('championImage').src = `http://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champion.id}_0.jpg`;
+                    document.getElementById('championImage').src = `http://ddragon.leagueoflegends.com/cdn/img/champion/tiles/${champion.id}_0.jpg`;
                     document.getElementById('championInfo').style.display = 'block';
 
                     const spellList = document.getElementById('spellList');
@@ -202,6 +672,8 @@
             });
 
             window.searchChampion = searchChampion;
+
+            refreshDisplay()
         });
     </script>
 </body>
