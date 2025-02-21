@@ -3,6 +3,8 @@
 Welcome to the **LOL Champion Infos Display** project! This application provides detailed information about League of Legends champions.
 It's built using Node.js.
 
+![Example](example.png)
+
 ## Features ✨
 
 - Display detailed information about 10 champions to use during drafts.
