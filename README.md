@@ -46,7 +46,7 @@ Follow these steps to install and set up the project:
 1. Go the releases page and download the latest version zip https://github.com/ImSpyke/lol-champion-infos-display/releases
 2. Extract in your choosen directory
 3. Navigate to this directory
-4. Run `npm_install.batch` or `npm_install.sh` depending on your operating system
+4. Run `npm_install.bat` or `npm_install.sh` depending on your operating system
 
 ## Usage 🚀
 
